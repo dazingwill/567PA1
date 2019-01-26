@@ -1,68 +1,52 @@
 from __future__ import division, print_function
 
-from typing import List, Callable
+from typing import List
 
 import numpy as np
 import scipy
-from collections import Counter
-
 
 ############################################################################
 # DO NOT MODIFY ABOVE CODES
 ############################################################################
+
+from collections import Counter
 
 class KNN:
 
     def __init__(self, k: int, distance_function):
         self.k = k
         self.distance_function = distance_function
+        self.train_features = None
+        self.train_labels = None
 
-    #TODO: Complete the training function
+    #TODO: save features and lable to self
     def train(self, features: List[List[float]], labels: List[int]):
-        #raise NotImplementedError
-        
-    
-    #TODO: Complete the prediction function
+        # features: List[List[float]] a list of points
+        # labels: List[int] labels of features
+        self.train_features = features
+        self.train_labels = labels
+
+    #TODO: predict labels of a list of points
     def predict(self, features: List[List[float]]) -> List[int]:
-        #raise NotImplementedError
-        
-    #TODO: Complete the get k nearest neighbor function
-    def get_k_neighbors(self, point):
-        #raise NotImplementedError
-        
-    #TODO: Complete the model selection function where you need to find the best k     
-    def model_selection_without_normalization(distance_funcs, Xtrain, ytrain, f1_score, Xval, yval, Xtest, ytest):
-        
-            
-            #Dont change any print statement
-            print('[part 1.1] {name}\tk: {k:d}\t'.format(name=name, k=k) + 
-                      'train: {train_f1_score:.5f}\t'.format(train_f1_score=train_f1_score) +
-                      'valid: {valid_f1_score:.5f}'.format(valid_f1_score=valid_f1_score))
-    
-            print()
-            print('[part 1.1] {name}\tbest_k: {best_k:d}\t'.format(name=name, best_k=best_k) +
-                  'test f1 score: {test_f1_score:.5f}'.format(test_f1_score=test_f1_score))
-            print()
-            return best_k, model
-    
-    #TODO: Complete the model selection function where you need to find the best k with transformation
-    def model_selection_with_transformation(distance_funcs,scaling_classes, Xtrain, ytrain, f1_score, Xval, yval, Xtest, ytest):
-        
-                #Dont change any print statement
-                print('[part 1.2] {name}\t{scaling_name}\tk: {k:d}\t'.format(name=name, scaling_name=scaling_name, k=k) +
-                          'train: {train_f1_score:.5f}\t'.format(train_f1_score=train_f1_score) + 
-                          'valid: {valid_f1_score:.5f}'.format(valid_f1_score=valid_f1_score))
-    
-                print()
-                print('[part 1.2] {name}\t{scaling_name}\t'.format(name=name, scaling_name=scaling_name) +
-                      'best_k: {best_k:d}\ttest: {test_f1_score:.5f}'.format(best_k=best_k, test_f1_score=test_f1_score))
-                print()
-        
-        
-    #TODO: Do the classification 
-    def test_classify(model):
-        
+        # features: List[List[float]] a list of points
+        # return: List[int] a list of predicted labels
+        res = []
+        for feature in features:
+            k_neighbors = self.get_k_neighbors(feature)
+            counter = Counter(k_neighbors)
+            res.append(counter.most_common(1)[0][0])
+        return res
+
+    #TODO: find KNN of one point
+    def get_k_neighbors(self, point: List[float]) -> List[int]:
+        # point: List[float] one example
+        # return: List[int] labels of K nearest neighbor
+        distances = (self.distance_function(a, point) for a in self.train_features)
+        labels = sorted(zip(distances, self.train_labels))[:self.k]
+        labels = [label[1] for label in labels]
+        return labels
+
 
 if __name__ == '__main__':
-    print(numpy.__version__)
+    print(np.__version__)
     print(scipy.__version__)
